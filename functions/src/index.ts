@@ -83,9 +83,9 @@ function getRandomIntBetween(a, b) {
   return Math.floor(Math.random() * (b - a) + a);
 }
 
-function subtractTimes(int aHours, int aMinutes, int bMinutes) {
-  int resHours   = aHours;
-  int resMinutes = aMinutes - bMinutes;
+function subtractTimes(aHours, aMinutes, bMinutes) {
+  let resHours = aHours;
+  let resMinutes = aMinutes - bMinutes;
   while(resMinutes < 0) {
     resHours -= 1;
     resMinutes += 60;
@@ -95,22 +95,22 @@ function subtractTimes(int aHours, int aMinutes, int bMinutes) {
 
 function haveOverlap(person1, person2) {
   //latest times person1 and person 2 can start eating so that they finish on time
-  person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.duration);
-  person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.duration);
+  const person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.duration);
+  const person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.duration);
   
   if (
-    person1_latest[hour] < person2.interval_start_hour ||
-    person2_latest[hour] < person1.interval_start_hour
+    person1_latest['hour'] < person2.interval_start_hour ||
+    person2_latest['hour'] < person1.interval_start_hour
   ) {
     return false;
   } else if (
-    person1_latest[hour] === person2.interval_start_hour &&
-    person1_latest[minute] <= person2.interval_start_minute
+    person1_latest['hour'] === person2.interval_start_hour &&
+    person1_latest['minute'] <= person2.interval_start_minute
   ) {
     return false;
   } else if (
-    person2_latest[hour] === person1.interval_start_hour &&
-    person2_latest[minute] <= person1.interval_start_minute
+    person2_latest['hour'] === person1.interval_start_hour &&
+    person2_latest['minute'] <= person1.interval_start_minute
   ) {
     return false;
   } else {
@@ -118,13 +118,13 @@ function haveOverlap(person1, person2) {
   }
 }
 
-function createGraph(persons) {
+function createGraph(persons, allUsers) {
   const edges = [];
 
   for (let i = 0; i < persons.length; i++) {
     for (let j = i + 1; j < persons.length; j++) {
       if (haveOverlap(persons[i], persons[j])) {
-        const weight = calculateScore(persons[i], persons[j]);
+        const weight = calculateScore(persons[i], persons[j], allUsers);
         const edge = { person1: persons[i], person2: persons[j], weight: weight };
         edges.push(edge);
       }
@@ -134,26 +134,15 @@ function createGraph(persons) {
   return { persons: persons, edges: edges };
 }
 
-function getAnswersFor(uid) {
-  return {
-    0: 1,
-    1: 2,
-    2: 1,
-    3: 0,
-    4: 2,
-    5: 0,
-    6: 0,
-    7: 1,
-    8: 0,
-    9: 3
-  }
+function getAnswersFor(uid, allUsers) {
+  return allUsers.hasOwnProperty(uid) ? allUsers[uid] : [];
 }
 
-function calculateScore(person1, person2) {
+function calculateScore(person1, person2, allUsers) {
   // const minimalAgreement = 3; //how many questions have to be equally answered at least
 
-  const answers1 = getAnswersFor(person1.uid);
-  const answers2 = getAnswersFor(person2.uid);
+  const answers1 = getAnswersFor(person1.uid, allUsers);
+  const answers2 = getAnswersFor(person2.uid, allUsers);
   const keys1 = Object.keys(answers1);
   const keys2 = Object.keys(answers2);
   const keyIntersection = keys1.filter(key => keys2.includes(key));
@@ -225,8 +214,8 @@ function squeezeMatchingIntoOutputDataStructure(bestMatching) {
 
 function getOverlap(person1, person2) {
   //latest times person1 and person 2 can start eating so that they finish on time
-  person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.duration);
-  person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.duration);
+  const person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.duration);
+  const person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.duration);
   
   let overlap_start_hour = 0;
   let overlap_start_minute = 0;
@@ -246,16 +235,16 @@ function getOverlap(person1, person2) {
     );
   }
 
-  if (person1_latest[hour] > person2_latest[hour]) {
-    overlap_end_hour = person2_latest[hour];
-    overlap_end_minute = person2_latest[minute];
-  } else if (person1_latest[hour] < person2_latest[hour]) {
-    overlap_end_hour = person1_latest[hour];
-    overlap_end_minute = person1_latest[minute];
+  if (person1_latest['hour'] > person2_latest['hour']) {
+    overlap_end_hour = person2_latest['hour'];
+    overlap_end_minute = person2_latest['minute'];
+  } else if (person1_latest['hour'] < person2_latest['hour']) {
+    overlap_end_hour = person1_latest['hour'];
+    overlap_end_minute = person1_latest['minute'];
   } else {
-    overlap_end_hour = person1_latest[hour];
+    overlap_end_hour = person1_latest['hour'];
     overlap_end_minute = Math.floor(
-      Math.min(person1_latest[minute], person2_latest[minute])
+      Math.min(person1_latest['minute'], person2_latest['minute'])
     );
   }
 
@@ -270,10 +259,14 @@ function getOverlap(person1, person2) {
 exports.doMatching = functions.firestore
   .document("/matching/{documentId}")
   .onWrite(async (change) => {
-    const matchingSnapshot = await db.collection("matching").get();
+    const matchingSnapshot = await db.collection('matching').get();
     const allMatchings = matchingSnapshot.docs.map(doc => doc.data());
+    const userSnapshot = await db.collection('users').get();
+    // Map<User UID, User>
+    const allUsers = { };
+    userSnapshot.docs.forEach(user => allUsers[user.uid] = user);
                 
-    const graph = createGraph(allMatchings);
+    const graph = createGraph(allMatchings, allUsers);
     const bestMatching = stochasticOptimalMatching(graph);
     const matchResults = squeezeMatchingIntoOutputDataStructure(bestMatching);
 
@@ -281,11 +274,10 @@ exports.doMatching = functions.firestore
     const matchingResultsRef = db.collection('matchResults');
     matchingResultsRef
       .get()
-      .then((snapshot2) => {
-        // When there are no documents left, we are done
-        if (snapshot2.size > 0) {
+      .then((snapshot) => {
+        if (snapshot.size > 0) {
           // Delete documents in a batch
-          snapshot2.docs.forEach((doc) => {
+          snapshot.docs.forEach((doc) => {
             batch.delete(doc.ref);
           });          
         } 

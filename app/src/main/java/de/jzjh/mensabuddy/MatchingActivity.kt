@@ -133,10 +133,6 @@ class MatchingActivity : AppCompatActivity() {
                 matchingRecord.min_duration)
         }
         else if (state == MatchingState.MatchFound) {
-            if (firebaseListener != null) {
-                firebaseListener!!.remove()
-                firebaseListener = null
-            }
             matching_state_subtitle.visibility = View.GONE;
             matching_details.visibility = View.GONE;
             matching_results_details.text = getString(R.string.matching_results,
