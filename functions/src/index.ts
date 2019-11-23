@@ -95,8 +95,8 @@ function subtractTimes(aHours, aMinutes, bMinutes) {
 
 function haveOverlap(person1, person2) {
   //latest times person1 and person 2 can start eating so that they finish on time
-  const person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.duration);
-  const person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.duration);
+  const person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.min_duration);
+  const person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.min_duration);
   
   if (
     person1_latest['hour'] < person2.interval_start_hour ||
@@ -214,8 +214,8 @@ function squeezeMatchingIntoOutputDataStructure(bestMatching) {
 
 function getOverlap(person1, person2) {
   //latest times person1 and person 2 can start eating so that they finish on time
-  const person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.duration);
-  const person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.duration);
+  const person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.min_duration);
+  const person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.min_duration);
   
   let overlap_start_hour = 0;
   let overlap_start_minute = 0;
