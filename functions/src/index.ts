@@ -83,22 +83,36 @@ function getRandomIntBetween(a, b) {
   return Math.floor(Math.random() * (b - a) + a);
 }
 
+function subtractTimes(int aHours, int aMinutes, int bMinutes) {
+  int resHours   = aHours;
+  int resMinutes = aMinutes - bMinutes;
+  while(resMinutes < 0) {
+    resHours -= 1;
+    resMinutes += 60;
+  }
+  return {hour: resHours, minute: resMinutes};
+}
+
 function haveOverlap(person1, person2) {
+  //latest times person1 and person 2 can start eating so that they finish on time
+  person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.duration);
+  person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.duration);
+  
   if (
-    person1.interval_end_hour < person2.interval_start_hour ||
-    person2.interval_end_hour < person1.interval_start_hour
+    person1_latest[hour] < person2.interval_start_hour ||
+    person2_latest[hour] < person1.interval_start_hour
   ) {
     return false;
   } else if (
-    person1.interval_end_hour === person2.interval_start_hour &&
-    person1.interval_end_minute <= person2.interval_start_minute
+    person1_latest[hour] === person2.interval_start_hour &&
+    person1_latest[minute] <= person2.interval_start_minute
   ) {
     return false;
   } else if (
-    person2.interval_end_hour === person1.interval_start_hour &&
-    person2.interval_end_minute <= person1.interval_start_minute
+    person2_latest[hour] === person1.interval_start_hour &&
+    person2_latest[minute] <= person1.interval_start_minute
   ) {
-    return true;
+    return false;
   } else {
     return true;
   }
@@ -210,6 +224,10 @@ function squeezeMatchingIntoOutputDataStructure(bestMatching) {
 }
 
 function getOverlap(person1, person2) {
+  //latest times person1 and person 2 can start eating so that they finish on time
+  person1_latest = subtractTimes(person1.interval_end_hour, person1.interval_end_minute, person1.duration);
+  person2_latest = subtractTimes(person2.interval_end_hour, person2.interval_end_minute, person2.duration);
+  
   let overlap_start_hour = 0;
   let overlap_start_minute = 0;
   let overlap_end_hour = 0;
@@ -228,16 +246,16 @@ function getOverlap(person1, person2) {
     );
   }
 
-  if (person1.interval_end_hour > person2.interval_end_hour) {
-    overlap_end_hour = person2.interval_end_hour;
-    overlap_end_minute = person2.interval_end_minute;
-  } else if (person1.interval_end_hour < person2.interval_end_hour) {
-    overlap_end_hour = person1.interval_end_hour;
-    overlap_end_minute = person1.interval_end_minute;
+  if (person1_latest[hour] > person2_latest[hour]) {
+    overlap_end_hour = person2_latest[hour];
+    overlap_end_minute = person2_latest[minute];
+  } else if (person1_latest[hour] < person2_latest[hour]) {
+    overlap_end_hour = person1_latest[hour];
+    overlap_end_minute = person1_latest[minute];
   } else {
-    overlap_end_hour = person1.interval_end_hour;
+    overlap_end_hour = person1_latest[hour];
     overlap_end_minute = Math.floor(
-      Math.min(person1.interval_end_minute, person2.interval_end_minute)
+      Math.min(person1_latest[minute], person2_latest[minute])
     );
   }
 
