@@ -205,7 +205,8 @@ class QuestionsActivity : AppCompatActivity() {
                     textChoices = listOf(
                         TextChoice(R.string.q16a1),
                         TextChoice(R.string.q16a2),
-                        TextChoice(R.string.q16a3)
+                        TextChoice(R.string.q16a3),
+                        TextChoice(R.string.q16a4)
                     )
                 )
             ),
