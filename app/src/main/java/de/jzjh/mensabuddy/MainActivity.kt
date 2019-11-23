@@ -87,8 +87,13 @@ class MainActivity : AppCompatActivity() {
             .document(user!!.uid)
             .get()
             .addOnSuccessListener { documentReference ->
-                userRecord = documentReference.toObject(UserRecord::class.java)!!
-                userRecord.updateSignInTime()
+                var parsedObject = documentReference.toObject(UserRecord::class.java)
+                if (parsedObject == null) {
+                    userRecord = UserRecord(user!!.uid, Date())
+                } else {
+                    userRecord = parsedObject!!
+                    userRecord.updateSignInTime()
+                }
                 updateUserRecord(db, userRecord)
                 askQuestionsIfEmpty(userRecord)
             }
