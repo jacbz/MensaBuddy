@@ -12,6 +12,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import de.jzjh.mensabuddy.models.UserRecord
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,15 +40,15 @@ class MainActivity : AppCompatActivity() {
             interval_start.set(Calendar.MINUTE, 0)
         }
         interval_end = interval_start.clone() as Calendar
-        interval_end.add(Calendar.MINUTE, 30)
-
+        interval_end.add(Calendar.MINUTE, 60)
+        refreshDisplay()
 
         interval_start_textview.setOnClickListener { v ->
-            picker(interval_start, interval_start_textview)
+            picker(interval_start)
         }
 
         interval_end_textview.setOnClickListener { v ->
-            picker(interval_end, interval_end_textview)
+            picker(interval_end)
         }
 
         val spinnerAdapter = ArrayAdapter(this, R.layout.duration_spinner_item, spinnerItems)
@@ -66,16 +68,32 @@ class MainActivity : AppCompatActivity() {
 
         // auth in Firebase
         auth = FirebaseAuth.getInstance()
+        val db = FirebaseFirestore.getInstance()
         auth.signInAnonymously()
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     Snackbar.make(main_activity, "Auth success, UID " + user!!.uid, Snackbar.LENGTH_SHORT).show();
+
+                    val userRecord = UserRecord(user!!.uid, Date())
+                    db.collection("users")
+                        .document(userRecord.uid)
+                        .set(userRecord)
+                        .addOnSuccessListener { documentReference ->
+                        }
+                        .addOnFailureListener { e ->
+                        }
+
                 } else {
                     Snackbar.make(main_activity, "Authentication failure!", Snackbar.LENGTH_SHORT)
                         .show();
                 }
             }
+    }
+
+    fun refreshDisplay() {
+        interval_start_textview.setText(timeFormat.format(interval_start.time))
+        interval_end_textview.setText(timeFormat.format(interval_end.time))
     }
 
     public override fun onStart() {
@@ -97,13 +115,13 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun picker(calendar: Calendar, textView: TextView) {
+    fun picker(calendar: Calendar) {
         val timePicker: TimePickerDialog
         timePicker = TimePickerDialog(this,
             OnTimeSetListener { timePicker, selectedHour, selectedMinute ->
                 calendar.set(Calendar.HOUR_OF_DAY, selectedHour)
                 calendar.set(Calendar.MINUTE, selectedMinute)
-                textView.setText(timeFormat.format(calendar.time))
+                refreshDisplay()
             },
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
