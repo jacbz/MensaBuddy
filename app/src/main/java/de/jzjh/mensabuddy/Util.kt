@@ -5,6 +5,7 @@ import java.util.*
 
 class Util {
     companion object {
+
         val TimeFormat = SimpleDateFormat("HH:mm")
 
         fun formatCal(cal: Calendar): String {

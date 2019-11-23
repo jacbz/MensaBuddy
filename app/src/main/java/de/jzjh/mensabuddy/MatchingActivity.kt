@@ -83,6 +83,18 @@ class MatchingActivity : AppCompatActivity() {
                     renderState()
 
                     animateMatchFound()
+                } else {
+                    // when the other party cancels at match, cancel too and close activity
+                    if (state == MatchingState.MatchFound) {
+                        AlertDialog.Builder(this)
+                            .setMessage("Sorry, your MensaBuddy cancelled the match :(\n" +
+                                    "Please try again!")
+                            .setCancelable(false)
+                            .setPositiveButton("  :(  ") { dialog, id ->
+                                deleteMatchingRecordAndQuit()
+                            }
+                            .show()
+                    }
                 }
             }
     }
@@ -146,8 +158,19 @@ class MatchingActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setMessage("Are you sure you want to cancel?")
             .setCancelable(false)
-            .setPositiveButton("Yes") { dialog, id -> super@MatchingActivity.onBackPressed() }
+            .setPositiveButton("Yes") { dialog, id ->
+                deleteMatchingRecordAndQuit()
+            }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    fun deleteMatchingRecordAndQuit() {
+        db.collection("matching")
+            .document(uid)
+            .delete()
+            .addOnSuccessListener { }
+            .addOnFailureListener { }
+        super@MatchingActivity.onBackPressed()
     }
 }
