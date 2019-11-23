@@ -67,26 +67,52 @@ class MainActivity : AppCompatActivity() {
 
         // auth in Firebase
         auth = FirebaseAuth.getInstance()
-        val db = FirebaseFirestore.getInstance()
         auth.signInAnonymously()
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    //Snackbar.make(main_activity, "Auth success, UID " + user!!.uid, Snackbar.LENGTH_SHORT).show();
-
-                    val userRecord = UserRecord(user!!.uid, Date())
-                    db.collection("users")
-                        .document(userRecord.uid)
-                        .set(userRecord)
-                        .addOnSuccessListener { documentReference ->
-                        }
-                        .addOnFailureListener { e ->
-                        }
-
+                    readAndSaveUserData()
                 } else {
                     Snackbar.make(main_activity, "Authentication failure!", Snackbar.LENGTH_SHORT)
                         .show();
                 }
+            }
+    }
+
+    fun readAndSaveUserData() {
+        val db = FirebaseFirestore.getInstance()
+        val user = auth.currentUser
+        var userRecord: UserRecord
+
+        db.collection("users")
+            .document(user!!.uid)
+            .get()
+            .addOnSuccessListener { documentReference ->
+                userRecord = documentReference.toObject(UserRecord::class.java)!!
+                userRecord.updateSignInTime()
+                updateUserRecord(db, userRecord)
+                askQuestionsIfEmpty(userRecord)
+            }
+            .addOnFailureListener { e ->
+                userRecord = UserRecord(user!!.uid, Date())
+                updateUserRecord(db, userRecord)
+                askQuestionsIfEmpty(userRecord)
+            }
+    }
+
+    fun askQuestionsIfEmpty(userRecord: UserRecord) {
+        if (userRecord.answers.isEmpty()) {
+            val intent = Intent(this, QuestionsActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    fun updateUserRecord(db: FirebaseFirestore, userRecord: UserRecord) {
+        db.collection("users")
+            .document(userRecord.uid)
+            .set(userRecord)
+            .addOnSuccessListener { documentReference ->
+            }
+            .addOnFailureListener { e ->
             }
     }
 

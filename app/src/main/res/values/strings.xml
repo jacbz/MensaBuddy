@@ -3,4 +3,80 @@
     <string name="notification_time">We will notify you at <b>%1$s</b> at the earliest if you have a Mensa Buddy. This is to ensure that everyone gets the best possible match.</string>
     <string name="matching_parameters">Interval: %1$s\nMin. duration: %2$d min</string>
     <string name="matching_results">You (%1$s) and your MensaBuddy (%2$s) will meet at <u><b>%3$s</b></u>!</string>
+
+    <string name="empty"/>
+    <string name="intro">Welcome to MensaBuddy</string>
+    <string name="intro_text">Here’s some questions to get you started. Our algorithm will try to find you the best lunch partner.</string>
+    <string name="intro_button">Begin</string>
+
+    <string name="completion">Done!</string>
+    <string name="completion_text">Happy lunching!</string>
+    <string name="completion_button">Finish</string>
+
+    <string name="q1">If you had to order food, would you rather choose...</string>
+    <string name="q1a1">Pizza</string>
+    <string name="q1a2">Sushi</string>
+
+    <string name="q2">Screwdriver or pencil?</string>
+    <string name="q2a1">Screwdriver</string>
+    <string name="q2a2">Pencil</string>
+
+    <string name="q3">Lecture or leisure?</string>
+    <string name="q3a1">Lecture</string>
+    <string name="q3a2">Leisure</string>
+
+    <string name="q4">Indoor or outdoor?</string>
+    <string name="q4a1">Indoor</string>
+    <string name="q4a2">Outdoor</string>
+
+    <string name="q5">Mountains or beaches?</string>
+    <string name="q5a1">Mountains</string>
+    <string name="q5a2">Beaches</string>
+
+    <string name="q6">Day or night?</string>
+    <string name="q6a1">Day</string>
+    <string name="q6a2">Night</string>
+
+    <string name="q7">If you were to buy a pet, would you rather choose ...?</string>
+    <string name="q7a1">A dog</string>
+    <string name="q7a2">A cat</string>
+
+    <string name="q8">How do you distinguish cars?</string>
+    <string name="q8a1">By colour</string>
+    <string name="q8a2">By brand</string>
+    <string name="q8a3">By horse powers</string>
+
+    <string name="q9">Would you open a letter that states the exact time of your death?</string>
+    <string name="q9a1">Yes</string>
+    <string name="q9a2">No</string>
+
+    <string name="q10">Would you like to be famous?</string>
+    <string name="q10a1">Yes</string>
+    <string name="q10a2">No</string>
+
+    <string name="q11">Before making a phone call, do you ever rehearse what you are going to say?</string>
+    <string name="q11a1">Yes</string>
+    <string name="q11a2">No</string>
+
+    <string name="q12">If you were able to live to the age of 90 and retain either the mind or the body of a 30-year old for the last 60 years of your life, which would you choose?</string>
+    <string name="q12a1">Body</string>
+    <string name="q12a2">Mind</string>
+
+    <string name="q13">Do you believe in the afterlife?</string>
+    <string name="q13a1">Yes</string>
+    <string name="q13a2">No</string>
+
+    <string name="q14">Introvert or extrovert?</string>
+    <string name="q14a1">Introvert</string>
+    <string name="q14a2">Extrovert</string>
+
+    <string name="q15">If you could choose the sex of your soon-to-be-born child, would you do it?</string>
+    <string name="q15a1">Yes</string>
+    <string name="q15a2">No</string>
+
+    <string name="q16">Which colour do you like most?</string>
+    <string name="q16a1">Red</string>
+    <string name="q16a2">Green</string>
+    <string name="q16a3">Blue</string>
+
 </resources>
