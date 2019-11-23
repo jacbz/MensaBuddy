@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private var interval_end: Calendar = Calendar.getInstance()
     private var duration = 30
 
-    private val timeFormat = SimpleDateFormat("HH:mm")
     private val spinnerItems = Array(10) { i -> (i + 3) * 5 }
 
     private lateinit var auth: FirebaseAuth
@@ -73,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    Snackbar.make(main_activity, "Auth success, UID " + user!!.uid, Snackbar.LENGTH_SHORT).show();
+                    //Snackbar.make(main_activity, "Auth success, UID " + user!!.uid, Snackbar.LENGTH_SHORT).show();
 
                     val userRecord = UserRecord(user!!.uid, Date())
                     db.collection("users")
@@ -92,8 +91,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun refreshDisplay() {
-        interval_start_textview.setText(timeFormat.format(interval_start.time))
-        interval_end_textview.setText(timeFormat.format(interval_end.time))
+        interval_start_textview.setText(Util.formatCal(interval_start))
+        interval_end_textview.setText(Util.formatCal(interval_end))
     }
 
     public override fun onStart() {

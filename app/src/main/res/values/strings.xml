@@ -1,12 +1,6 @@
 <resources>
     <string name="app_name">MensaBuddy</string>
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >1 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="notification_time">We will notify you at <b>%1$s</b> at the earliest if you have a Mensa Buddy. This is to ensure that everyone gets the best possible match.</string>
+    <string name="matching_parameters">Interval: %1$s\nMin. duration: %2$d min</string>
+    <string name="matching_results">You (%1$s) and your MensaBuddy (%2$s) will meet at <u><b>%3$s</b></u>!</string>
 </resources>
