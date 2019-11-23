@@ -74,9 +74,10 @@
     <string name="q15a1">Yes</string>
     <string name="q15a2">No</string>
 
-    <string name="q16">Which colour do you like most?</string>
-    <string name="q16a1">Red</string>
-    <string name="q16a2">Green</string>
-    <string name="q16a3">Blue</string>
+    <string name="q16">Which area are you most talended in?</string>
+    <string name="q16a1">Mathematics/Logic</string>
+    <string name="q16a2">Technics/Mechanics</string>
+    <string name="q16a3">Arts/Languages/Philosophy</string>
+    <string name="q16a4">Sports</string>
 
 </resources>
