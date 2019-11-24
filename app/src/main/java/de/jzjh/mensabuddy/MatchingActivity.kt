@@ -2,12 +2,15 @@ package de.jzjh.mensabuddy
 
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -24,13 +27,15 @@ class MatchingActivity : AppCompatActivity() {
     val uid = auth.uid!!
     lateinit var matchingRecord: MatchingRecord
     lateinit var matchingResultRecord: MatchingResultRecord
+    var activityIsClosing = false
 
     var firebaseListener: ListenerRegistration? = null
 
     enum class MatchingState(val message: String) {
         Connecting("Connecting..."),
         Matching("Matching..."),
-        MatchFound("Match found!")
+        MatchFound("Match found!"),
+        LunchInProgress("Lunch in progress")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +66,39 @@ class MatchingActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
             }
+
+        message_button.setOnClickListener { view ->
+            shareContactInfo(this)
+        }
+    }
+
+    private fun shareContactInfo(context: Context) {
+        val textInputLayout = TextInputLayout(context)
+        textInputLayout.setPadding(
+            resources.getDimensionPixelOffset(R.dimen.dp_19), // if you look at android alert_dialog.xml, you will see the message textview have margin 14dp and padding 5dp. This is the reason why I use 19 here
+            0,
+            resources.getDimensionPixelOffset(R.dimen.dp_19),
+            0
+        )
+        val input = EditText(context)
+        textInputLayout.hint = "Your message"
+        textInputLayout.addView(input)
+        textInputLayout.isCounterEnabled = true
+        textInputLayout.counterMaxLength = 128
+
+        val alert = AlertDialog.Builder(context)
+            .setTitle("Sharing contact information")
+            .setView(textInputLayout)
+            .setMessage("Input your contact information for your MensaBuddy if you would like to keep in touch. " +
+                    "This information is only revealed to them if they also choose to share their contact details, and vice versa.")
+            .setPositiveButton("Submit") { dialog, _ ->
+                dialog.cancel()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }.create()
+
+        alert.show()
     }
 
     fun listenForMatch() {
@@ -85,7 +123,7 @@ class MatchingActivity : AppCompatActivity() {
                     animateMatchFound()
                 } else {
                     // when the other party cancels at match, cancel too and close activity
-                    if (state == MatchingState.MatchFound) {
+                    if (!activityIsClosing && state == MatchingState.MatchFound) {
                         AlertDialog.Builder(this)
                             .setMessage("Sorry, your MensaBuddy cancelled the match :(\n" +
                                     "Please try again!")
@@ -114,31 +152,44 @@ class MatchingActivity : AppCompatActivity() {
 
         handler.postDelayed({
             match_found_animation.visibility = View.VISIBLE
+            match_found_animation.speed = 0.4f
             match_found_animation.playAnimation()
 
             matching_results_details.animate().alpha(1f).duration = 1000
+
         }, 1000)
+
+        // transition into Lunch in Progress
+        val transitionDelay = 600000 // 10 minutes
+        val lunchTimeCal = Util.calendarFromTime(matchingResultRecord.interval_start_hour, matchingResultRecord.interval_start_minute)
+        val timeUntilLunch = lunchTimeCal.time.time - Date().time
+        handler.postDelayed({
+            state = MatchingState.LunchInProgress
+            renderState()
+        }, Math.max(0, timeUntilLunch))
 
     }
 
     fun renderState() {
+        Log.i("MA", "Current state: ${state}")
         matching_state_textview.text = state.message
-
-        val notificationTime = Util.calendarFromTime(
-            matchingRecord.interval_start_hour,
-            matchingRecord.interval_start_minute)
-        notificationTime.add(Calendar.MINUTE, -15)
 
         if (state == MatchingState.Connecting) {
             matching_state_subtitle.visibility = View.GONE;
             matching_details.visibility = View.GONE;
             matching_results_details.alpha = 0f
+            message_button.hide()
         }
         else if (state == MatchingState.Matching) {
             matching_state_subtitle.visibility = View.VISIBLE;
             matching_details.visibility = View.VISIBLE;
 
-            matching_state_subtitle.text = getString(R.string.notification_time, Util.formatCal(notificationTime))
+//            val notificationTime = Util.calendarFromTime(
+//                matchingRecord.interval_start_hour,
+//                matchingRecord.interval_start_minute)
+//            notificationTime.add(Calendar.MINUTE, -15)
+//            matching_state_subtitle.text = getString(R.string.notification_time, Util.formatCal(notificationTime))
+            matching_state_subtitle.text = getString(R.string.notification_time)
             matching_details.text = getString(R.string.matching_parameters,
                 Util.formatCal(matchingRecord.interval_start_hour, matchingRecord.interval_start_minute,
                     matchingRecord.interval_end_hour, matchingRecord.interval_end_minute),
@@ -152,11 +203,30 @@ class MatchingActivity : AppCompatActivity() {
                 matchingResultRecord.uids.find { x -> x != uid }!!.substring(0, 3),
                 Util.formatCal(matchingResultRecord.interval_start_hour, matchingResultRecord.interval_start_minute))
         }
+        else if (state == MatchingState.LunchInProgress) {
+            matching_state_textview.text = MatchingState.LunchInProgress.message
+            match_found_animation.speed = 2f
+            match_found_animation.setAnimation(R.raw.lunch)
+            message_button.show()
+
+            ObjectAnimator.ofFloat(message_button, "translationX", 164f).apply {
+                duration = 1000
+                interpolator = AccelerateDecelerateInterpolator()
+                start()
+            }
+            ObjectAnimator.ofFloat(cancel_button, "translationX", -164f).apply {
+                duration = 1000
+                interpolator = AccelerateDecelerateInterpolator()
+                start()
+            }
+        }
     }
 
     override fun onBackPressed() {
         AlertDialog.Builder(this)
-            .setMessage("Are you sure you want to cancel?")
+            .setMessage(
+                if (state == MatchingState.LunchInProgress) "Quit this screen?"
+                else "Are you sure you want to cancel?")
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
                 deleteMatchingRecordAndQuit()
@@ -166,11 +236,12 @@ class MatchingActivity : AppCompatActivity() {
     }
 
     fun deleteMatchingRecordAndQuit() {
+        activityIsClosing = true;
         db.collection("matching")
             .document(uid)
             .delete()
             .addOnSuccessListener { }
             .addOnFailureListener { }
-        super@MatchingActivity.onBackPressed()
+        finish()
     }
 }

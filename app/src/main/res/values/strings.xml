@@ -1,19 +1,19 @@
 <resources>
     <string name="app_name">MensaBuddy</string>
-    <string name="notification_time">We will notify you at <b>%1$s</b> at the earliest if you have a Mensa Buddy. This is to ensure that everyone gets the best possible match.</string>
+    <string name="notification_time">Trying to find the best MensaBuddy for you…</string>
     <string name="matching_parameters">Interval: %1$s\nMin. duration: %2$d min</string>
-    <string name="matching_results">You (%1$s) and your MensaBuddy (%2$s) will meet at <u><b>%3$s</b></u>!</string>
+    <string name="matching_results">You (ID: %1$s) and your MensaBuddy (ID: %2$s) will meet at <u><b>%3$s</b></u> at the Mensa Garching (main entrance)!</string>
 
     <string name="empty"/>
     <string name="intro">Welcome to MensaBuddy</string>
-    <string name="intro_text">Here’s some questions to get you started. Our algorithm will try to find you the best lunch partner.</string>
+    <string name="intro_text">Here’s some questions to get you started. Our algorithm will try to find you the best lunch partner based on your answers.</string>
     <string name="intro_button">Begin</string>
 
     <string name="completion">Done!</string>
     <string name="completion_text">Happy lunching!</string>
     <string name="completion_button">Finish</string>
 
-    <string name="q1">If you had to order food, would you rather choose...</string>
+    <string name="q1">If you had to order food, would you rather choose…</string>
     <string name="q1a1">Pizza</string>
     <string name="q1a2">Sushi</string>
 
@@ -37,7 +37,7 @@
     <string name="q6a1">Day</string>
     <string name="q6a2">Night</string>
 
-    <string name="q7">If you were to buy a pet, would you rather choose ...?</string>
+    <string name="q7">If you were to buy a pet, would you rather choose…?</string>
     <string name="q7a1">A dog</string>
     <string name="q7a2">A cat</string>
 
@@ -66,7 +66,7 @@
     <string name="q13a1">Yes</string>
     <string name="q13a2">No</string>
 
-    <string name="q14">Introvert or extrovert?</string>
+    <string name="q14">Are you more of an introvert or an extrovert?</string>
     <string name="q14a1">Introvert</string>
     <string name="q14a2">Extrovert</string>
 
@@ -74,10 +74,10 @@
     <string name="q15a1">Yes</string>
     <string name="q15a2">No</string>
 
-    <string name="q16">Which area are you most talended in?</string>
-    <string name="q16a1">Mathematics/Logic</string>
-    <string name="q16a2">Technics/Mechanics</string>
-    <string name="q16a3">Arts/Languages/Philosophy</string>
+    <string name="q16">Which area are you most talented in?</string>
+    <string name="q16a1">Mathematics/Logic/Science</string>
+    <string name="q16a2">Engineering/Mechanics</string>
+    <string name="q16a3">Arts/Languages/Humanities</string>
     <string name="q16a4">Sports</string>
 
 </resources>

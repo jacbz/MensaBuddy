@@ -93,11 +93,22 @@
                         android:layout_height="match_parent"
                         android:padding="8dp">
 
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_confirm"
+                            android:tint="@color/colorPrimaryLight"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
                         <LinearLayout
+                            android:id="@+id/linearLayout2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            app:layout_constraintBottom_toBottomOf="parent">
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            tools:layout_editor_absoluteX="8dp"
+                            android:paddingLeft="36dp">
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -176,7 +187,8 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -220,13 +232,14 @@
                         android:text="12:00"
                         android:textAllCaps="true"
                         android:textColor="#000"
-                        android:textSize="32sp" />
+                        android:textSize="32sp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:background="@drawable/rounded_background"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
                         android:gravity="center"
                         android:text="-"
                         android:textAllCaps="true"
@@ -241,7 +254,10 @@
                         android:text="14:00"
                         android:textAllCaps="true"
                         android:textColor="#000"
-                        android:textSize="32sp" />
+                        android:textSize="32sp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:background="@drawable/rounded_background" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -254,13 +270,14 @@
                         android:id="@+id/duration_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@null"
+                        android:background="@drawable/rounded_background"
                         android:gravity="center" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:layout_marginLeft="2dp"
                         android:text="min."
                         android:textSize="18sp" />
                 </LinearLayout>
